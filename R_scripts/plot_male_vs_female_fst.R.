@@ -1,0 +1,82 @@
+# =========================
+# FST Manhattan plot (CMplot)
+# for site-level FST
+# =========================
+#""
+#""
+
+
+library(CMplot)
+
+# ---------- 输入 ----------
+input  <- ""   # 你的 3 列 FST 文件
+prefix <- ""
+
+# ---------- 读取数据 ----------
+data <- read.table(input, header = TRUE, stringsAsFactors = FALSE)
+
+# 强制类型（非常重要）
+data$CHR <- as.numeric(data$CHR)
+data$BP  <- as.numeric(data$BP)
+data$FST <- as.numeric(data$FST)
+
+# 去掉非法值
+data <- data[is.finite(data$FST), ]
+
+# 负 FST 设为 0（标准做法，审稿人接受）
+data$FST[data$FST < 0] <- 0
+
+# ---------- 构造 CMplot 输入格式 ----------
+Fst <- data.frame(
+  ID  = paste(data$CHR, data$BP, sep = "_"),
+  chr = data$CHR,
+  pos = data$BP,
+  val = data$FST
+)
+
+# y 轴范围（自动）
+ymax <- max(Fst$val)
+ylim_use <- c(0, ymax * 1.05)
+
+# ---------- PNG ----------
+png(paste0(prefix, "_FST_manhattan.png"), width = 1200, height = 400)
+
+CMplot(
+  Fst,
+  type = "p",
+  plot.type = "m",
+  LOG10 = FALSE,
+  col = c("#35b8b5", "#006aab"),
+  cex = 0.3,
+  band = 0.5,
+  ylab = "FST (female vs male)",
+  ylim = ylim_use,
+  threshold = NULL,          # 不画阈值线
+  amplify = FALSE,
+  file.output = FALSE
+)
+
+dev.off()
+
+# ---------- PDF ----------
+pdf(paste0(prefix, "_FST_manhattan.pdf"), width = 12, height = 4)
+
+CMplot(
+  Fst,
+  type = "p",
+  plot.type = "m",
+  LOG10 = FALSE,
+  col = c("#35b8b5", "#006aab"),
+  cex = 0.3,
+  band = 0.5,
+  ylab = "FST (female vs male)",
+  ylim = ylim_use,
+  threshold = NULL,
+  amplify = FALSE,
+  file.output = FALSE
+)
+
+dev.off()
+
+cat("Finish!\n")
+
