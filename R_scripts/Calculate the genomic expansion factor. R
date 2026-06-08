@@ -2,7 +2,7 @@
 
 
 gwas <- read.table(
-  "C:/Users/13799/Desktop/R/谢武-r脚本/计数基因组膨胀因子/长吻鮠/no_chr8_indel.txt",
+  "",
   header = TRUE,
   stringsAsFactors = FALSE
 )
